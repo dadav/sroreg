@@ -6,13 +6,13 @@
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    overflow: hidden;
 }
 
 .split-container {
     display: flex;
     height: 100vh;
     width: 100%;
+    overflow: hidden;
 }
 
 .left-panel {
@@ -286,5 +286,212 @@ input:hover:not(:focus) {
     input {
         padding: 12px 14px;
         font-size: 15px;
+    }
+}
+
+/* Dashboard / Profile Styles */
+.dashboard-header {
+    background-color: #1a1a2e;
+    border-bottom: 2px solid #fbbf24;
+    padding: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-link {
+    display: inline-block;
+    line-height: 0;
+    transition: opacity 0.3s ease;
+}
+
+.logo-link:hover {
+    opacity: 0.8;
+}
+
+.header-logo {
+    height: 40px;
+    width: auto;
+    display: block;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.username-display {
+    color: #fbbf24;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.logout-btn {
+    background: linear-gradient(135deg, #fbbf24 0%, #eab308 100%);
+    color: #1a1a2e;
+    padding: 8px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(251, 191, 36, 0.2);
+}
+
+.logout-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(251, 191, 36, 0.3);
+}
+
+.logout-btn:active {
+    transform: translateY(0);
+}
+
+.dashboard-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+    padding: 100px 24px 60px 24px;
+}
+
+.dashboard-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+}
+
+.dashboard-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 32px;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #374151;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #fbbf24;
+}
+
+.account-info {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.info-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #6b7280;
+    min-width: 100px;
+}
+
+.info-value {
+    color: #374151;
+    font-weight: 500;
+}
+
+.form-links {
+    margin-top: 24px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.link {
+    color: #fbbf24;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.link:hover {
+    color: #eab308;
+    text-decoration: underline;
+}
+
+.separator {
+    color: #9ca3af;
+}
+
+.form-description {
+    color: #6b7280;
+    margin-bottom: 24px;
+    line-height: 1.6;
+}
+
+/* Responsive dashboard styles */
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 24px 16px;
+    }
+
+    .dashboard-title {
+        font-size: 24px;
+        margin-bottom: 24px;
+    }
+
+    .card {
+        padding: 24px;
+    }
+
+    .card-title {
+        font-size: 18px;
+    }
+
+    .header-content {
+        padding: 12px 16px;
+    }
+
+    .header-logo {
+        height: 32px;
+    }
+
+    .username-display {
+        font-size: 13px;
+    }
+
+    .logout-btn {
+        padding: 6px 16px;
+        font-size: 13px;
+    }
+
+    .info-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .info-label {
+        min-width: auto;
     }
 }
