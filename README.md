@@ -27,25 +27,82 @@ A beautiful split-screen registration website for Silkroad Online built with Go.
 - **Right Panel**: Registration form with clean, modern styling
 - **Mobile Responsive**: Adapts to vertical layout on smaller screens
 
-## Database Configuration
+## Configuration
 
-- Server: localhost:1433
+The application can be configured using environment variables or command-line flags.
+
+### Environment Variables
+
+Create a `.env` file (use `.env.example` as template):
+
+```bash
+# Database Configuration
+DB_SERVER=localhost
+DB_PORT=1433
+DB_USER=sa
+DB_PASSWORD=YourPasswordHere
+DB_DATABASE=SRO_VT_ACCOUNT
+
+# Server Configuration
+SERVER_PORT=8080
+```
+
+### Command-Line Flags
+
+All settings can be overridden using command-line flags:
+
+```bash
+./sroreg --db-server localhost \
+         --db-port 1433 \
+         --db-user sa \
+         --db-password YourPassword \
+         --db-database SRO_VT_ACCOUNT \
+         --port 8080
+```
+
+### Configuration Priority
+
+Configuration is loaded in the following order (later overrides earlier):
+1. Default values (localhost:1433, port 8080)
+2. Environment variables
+3. Command-line flags
+
+### Database Schema
+
 - Database: SRO_VT_ACCOUNT
 - Table: dbo.TB_User
 - Columns used: StrUserID, password, Email, sec_primary, sec_content
 
 ## Running the Application
 
-1. Make sure SQL Server is running on localhost:1433
-2. Install dependencies:
+### Using Environment Variables
+
+1. Copy the example environment file:
    ```bash
-   go mod download
+   cp .env.example .env
    ```
+
+2. Edit `.env` and set your database password
+
 3. Run the server:
    ```bash
+   export $(cat .env | xargs)
    go run main.go
    ```
-4. Open your browser and navigate to: http://localhost:8080
+
+### Using Command-Line Flags
+
+```bash
+go run main.go --db-password YourPassword --port 8080
+```
+
+### Quick Start (with defaults)
+
+```bash
+DB_PASSWORD=Foobarfoobar2 go run main.go
+```
+
+The server will start on http://localhost:8080 (or the port you configured)
 
 ## Building and Releases
 

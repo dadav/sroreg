@@ -4,22 +4,26 @@ import (
 	"crypto/md5"
 	"database/sql"
 	"encoding/hex"
+	"flag"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"regexp"
+	"strconv"
 	"strings"
 
 	_ "github.com/microsoft/go-mssqldb"
 )
 
 type Config struct {
-	Server   string
-	Port     int
-	User     string
-	Password string
-	Database string
+	DBServer   string
+	DBPort     int
+	DBUser     string
+	DBPassword string
+	DBDatabase string
+	ServerPort string
 }
 
 var db *sql.DB
@@ -28,16 +32,52 @@ var tmpl *template.Template
 func main() {
 	var err error
 
+	// Command-line flags
+	dbServer := flag.String("db-server", "", "Database server address")
+	dbPort := flag.Int("db-port", 0, "Database server port")
+	dbUser := flag.String("db-user", "", "Database user")
+	dbPassword := flag.String("db-password", "", "Database password")
+	dbDatabase := flag.String("db-database", "", "Database name")
+	serverPort := flag.String("port", "", "HTTP server port")
+	flag.Parse()
+
+	// Load configuration from environment variables with defaults
 	config := Config{
-		Server:   "localhost",
-		Port:     1433,
-		User:     "sa",
-		Password: "Foobarfoobar2",
-		Database: "SRO_VT_ACCOUNT",
+		DBServer:   getEnvOrDefault("DB_SERVER", "localhost"),
+		DBPort:     getEnvAsIntOrDefault("DB_PORT", 1433),
+		DBUser:     getEnvOrDefault("DB_USER", "sa"),
+		DBPassword: getEnvOrDefault("DB_PASSWORD", ""),
+		DBDatabase: getEnvOrDefault("DB_DATABASE", "SRO_VT_ACCOUNT"),
+		ServerPort: getEnvOrDefault("SERVER_PORT", "8080"),
+	}
+
+	// Override with command-line flags if provided
+	if *dbServer != "" {
+		config.DBServer = *dbServer
+	}
+	if *dbPort != 0 {
+		config.DBPort = *dbPort
+	}
+	if *dbUser != "" {
+		config.DBUser = *dbUser
+	}
+	if *dbPassword != "" {
+		config.DBPassword = *dbPassword
+	}
+	if *dbDatabase != "" {
+		config.DBDatabase = *dbDatabase
+	}
+	if *serverPort != "" {
+		config.ServerPort = *serverPort
+	}
+
+	// Check if password is set
+	if config.DBPassword == "" {
+		log.Fatal("Database password must be set via DB_PASSWORD environment variable or --db-password flag")
 	}
 
 	connString := fmt.Sprintf("server=%s;user id=%s;password=%s;port=%d;database=%s",
-		config.Server, config.User, config.Password, config.Port, config.Database)
+		config.DBServer, config.DBUser, config.DBPassword, config.DBPort, config.DBDatabase)
 
 	db, err = sql.Open("sqlserver", connString)
 	if err != nil {
@@ -50,7 +90,8 @@ func main() {
 		log.Fatal("Error connecting to database: ", err.Error())
 	}
 
-	log.Println("Connected to database successfully!")
+	log.Printf("Connected to database %s@%s:%d/%s successfully!\n",
+		config.DBUser, config.DBServer, config.DBPort, config.DBDatabase)
 
 	tmpl = template.Must(template.ParseFiles("templates/register.html"))
 
@@ -58,8 +99,25 @@ func main() {
 	http.HandleFunc("/register", handleRegister)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
-	log.Println("Server starting on http://localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	serverAddr := ":" + config.ServerPort
+	log.Printf("Server starting on http://localhost:%s\n", config.ServerPort)
+	log.Fatal(http.ListenAndServe(serverAddr, nil))
+}
+
+func getEnvOrDefault(key, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return defaultValue
+}
+
+func getEnvAsIntOrDefault(key string, defaultValue int) int {
+	if value := os.Getenv(key); value != "" {
+		if intVal, err := strconv.Atoi(value); err == nil {
+			return intVal
+		}
+	}
+	return defaultValue
 }
 
 func handleHome(w http.ResponseWriter, r *http.Request) {

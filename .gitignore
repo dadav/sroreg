@@ -9,6 +9,10 @@ dist/
 *.log
 *.out
 
+# Environment files
+.env
+.env.local
+
 # IDE
 .vscode/
 .idea/
