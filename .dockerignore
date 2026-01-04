@@ -1,0 +1,49 @@
+# Git
+.git
+.gitignore
+
+# Build artifacts
+sroreg
+*.exe
+dist/
+*.tar.gz
+*.zip
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Certificates (should be mounted as volumes)
+certs/
+
+# Documentation
+README.md
+CLAUDE.md
+*.md
+
+# CI/CD
+.github/
+.goreleaser.yaml
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Caddy
+Caddyfile
+Caddyfile.example
+
+# Scripts
+generate-cert.sh
+
+# Claude
+.claude/

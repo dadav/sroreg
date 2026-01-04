@@ -1,0 +1,42 @@
+version: '3.8'
+
+# Production deployment with Caddy reverse proxy
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.caddy.yml up -d
+
+services:
+  sroreg:
+    # Remove port mapping - Caddy will handle external access
+    ports: []
+    environment:
+      # BASE_URL will be set from environment or use Caddy's domain
+      BASE_URL: ${BASE_URL:-https://${DOMAIN}}
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: sroreg-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"  # HTTP/3
+    environment:
+      DOMAIN: ${DOMAIN:?DOMAIN is required}
+    volumes:
+      - ./Caddyfile.docker:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks:
+      - sroreg-network
+    depends_on:
+      - sroreg
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+volumes:
+  caddy-data:
+    driver: local
+  caddy-config:
+    driver: local
