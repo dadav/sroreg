@@ -1,0 +1,290 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    overflow: hidden;
+}
+
+.split-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+.left-panel {
+    flex: 1;
+    background-image: url('/static/silkroad-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    background-color: #1a1a2e;
+}
+
+.left-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(20, 20, 20, 0.80) 100%);
+}
+
+.image-overlay {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px;
+    text-align: center;
+}
+
+.image-overlay .logo {
+    max-width: 450px;
+    width: 80%;
+    height: auto;
+    margin-bottom: 40px;
+    filter: drop-shadow(0 4px 30px rgba(0, 0, 0, 0.3));
+    animation: fadeInDown 0.8s ease-out;
+}
+
+.image-overlay p {
+    font-size: 22px;
+    color: rgba(255, 255, 255, 0.98);
+    font-weight: 400;
+    line-height: 1.6;
+    max-width: 500px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    animation: fadeInDown 0.8s ease-out 0.2s both;
+}
+
+.right-panel {
+    flex: 1;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+    max-height: 100vh;
+}
+
+.form-container {
+    width: 100%;
+    max-width: 480px;
+    padding: 60px 40px;
+    animation: fadeInRight 0.8s ease-out;
+}
+
+.form-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 40px;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.alert {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    margin-bottom: 32px;
+    font-size: 15px;
+    font-weight: 500;
+    animation: slideIn 0.4s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert.error {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.alert.success {
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+}
+
+.form-group {
+    margin-bottom: 24px;
+}
+
+label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+    letter-spacing: 0.2px;
+}
+
+input {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #1f2937;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+input::placeholder {
+    color: #9ca3af;
+}
+
+input:focus {
+    border-color: #eab308;
+    box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.15);
+}
+
+input:hover:not(:focus) {
+    border-color: #d1d5db;
+}
+
+.help-text {
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 6px;
+    font-weight: 400;
+    transition: color 0.3s ease;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 14px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #000000;
+    background: linear-gradient(135deg, #fbbf24 0%, #eab308 100%);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 16px;
+    box-shadow: 0 4px 12px rgba(234, 179, 8, 0.3);
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(234, 179, 8, 0.4);
+    background: linear-gradient(135deg, #fcd34d 0%, #fbbf24 100%);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(234, 179, 8, 0.3);
+}
+
+@media (max-width: 1024px) {
+    .split-container {
+        flex-direction: column;
+    }
+
+    .left-panel {
+        min-height: 40vh;
+    }
+
+    .image-overlay .logo {
+        max-width: 350px;
+        margin-bottom: 30px;
+    }
+
+    .image-overlay p {
+        font-size: 18px;
+    }
+
+    .right-panel {
+        max-height: 60vh;
+    }
+
+    .form-container {
+        padding: 40px 32px;
+    }
+
+    .form-title {
+        font-size: 28px;
+        margin-bottom: 32px;
+    }
+}
+
+@media (max-width: 640px) {
+    .left-panel {
+        min-height: 30vh;
+    }
+
+    .image-overlay {
+        padding: 30px 20px;
+    }
+
+    .image-overlay .logo {
+        max-width: 280px;
+        margin-bottom: 20px;
+    }
+
+    .image-overlay p {
+        font-size: 16px;
+    }
+
+    .form-container {
+        padding: 32px 24px;
+    }
+
+    .form-title {
+        font-size: 24px;
+        margin-bottom: 28px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    input {
+        padding: 12px 14px;
+        font-size: 15px;
+    }
+}

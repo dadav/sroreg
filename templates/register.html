@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Silkroad Online - Register</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <div class="split-container">
+      <div class="left-panel">
+        <div class="image-overlay">
+          <img src="/static/logo.png" alt="Silkroad Online" class="logo" />
+          <p>Begin your legendary journey!</p>
+        </div>
+      </div>
+
+      <div class="right-panel">
+        <div class="form-container">
+          <h2 class="form-title">Create Account</h2>
+
+          {{if .Error}}
+          <div class="alert error">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+              />
+            </svg>
+            <span>{{.Error}}</span>
+          </div>
+          {{end}} {{if .Success}}
+          <div class="alert success">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              />
+            </svg>
+            <span>{{.Success}}</span>
+          </div>
+          {{end}}
+
+          <form action="/register" method="POST">
+            <div class="form-group">
+              <label for="username">Username</label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                placeholder="Enter your username"
+                required
+                minlength="4"
+                maxlength="16"
+                pattern="[a-zA-Z0-9]+"
+                title="Only letters and numbers allowed"
+              />
+              <div class="help-text">
+                4-16 characters, letters and numbers only
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="your@email.com"
+                required
+                pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
+                title="Please enter a valid email address"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Create a password"
+                required
+                minlength="6"
+              />
+              <div class="help-text">Minimum 6 characters</div>
+            </div>
+
+            <div class="form-group">
+              <label for="confirm_password">Confirm Password</label>
+              <input
+                type="password"
+                id="confirm_password"
+                name="confirm_password"
+                placeholder="Re-enter your password"
+                required
+                minlength="6"
+              />
+            </div>
+
+            <button type="submit" class="btn-primary">Create Account</button>
+          </form>
+          <script>
+            const usernameInput = document.getElementById("username");
+            const emailInput = document.getElementById("email");
+            const passwordInput = document.getElementById("password");
+            const confirmPasswordInput = document.getElementById("confirm_password");
+
+            // Real-time username validation
+            usernameInput.addEventListener("input", function() {
+              const value = this.value;
+              const parent = this.parentElement;
+              const helpText = parent.querySelector(".help-text");
+
+              if (value.length === 0) {
+                helpText.textContent = "4-16 characters, letters and numbers only";
+                helpText.style.color = "#6b7280";
+                this.style.borderColor = "#e5e7eb";
+              } else if (value.length < 4) {
+                helpText.textContent = "Too short (minimum 4 characters)";
+                helpText.style.color = "#dc2626";
+                this.style.borderColor = "#dc2626";
+              } else if (value.length > 16) {
+                helpText.textContent = "Too long (maximum 16 characters)";
+                helpText.style.color = "#dc2626";
+                this.style.borderColor = "#dc2626";
+              } else if (!/^[a-zA-Z0-9]+$/.test(value)) {
+                helpText.textContent = "Only letters and numbers allowed";
+                helpText.style.color = "#dc2626";
+                this.style.borderColor = "#dc2626";
+              } else {
+                helpText.textContent = "✓ Valid username";
+                helpText.style.color = "#16a34a";
+                this.style.borderColor = "#16a34a";
+              }
+            });
+
+            // Real-time email validation
+            emailInput.addEventListener("input", function() {
+              const value = this.value;
+              const parent = this.parentElement;
+              let helpText = parent.querySelector(".help-text");
+
+              if (!helpText) {
+                helpText = document.createElement("div");
+                helpText.className = "help-text";
+                parent.appendChild(helpText);
+              }
+
+              if (value.length === 0) {
+                helpText.textContent = "";
+                this.style.borderColor = "#e5e7eb";
+              } else if (!/^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(value)) {
+                helpText.textContent = "Invalid email format";
+                helpText.style.color = "#dc2626";
+                this.style.borderColor = "#dc2626";
+              } else {
+                helpText.textContent = "✓ Valid email";
+                helpText.style.color = "#16a34a";
+                this.style.borderColor = "#16a34a";
+              }
+            });
+
+            // Real-time password validation
+            passwordInput.addEventListener("input", function() {
+              const value = this.value;
+              const parent = this.parentElement;
+              const helpText = parent.querySelector(".help-text");
+
+              if (value.length === 0) {
+                helpText.textContent = "Minimum 6 characters";
+                helpText.style.color = "#6b7280";
+                this.style.borderColor = "#e5e7eb";
+              } else if (value.length < 6) {
+                helpText.textContent = "Too short (minimum 6 characters)";
+                helpText.style.color = "#dc2626";
+                this.style.borderColor = "#dc2626";
+              } else {
+                helpText.textContent = "✓ Strong password";
+                helpText.style.color = "#16a34a";
+                this.style.borderColor = "#16a34a";
+              }
+
+              // Also check confirm password if it has a value
+              if (confirmPasswordInput.value.length > 0) {
+                confirmPasswordInput.dispatchEvent(new Event('input'));
+              }
+            });
+
+            // Real-time confirm password validation
+            confirmPasswordInput.addEventListener("input", function() {
+              const value = this.value;
+              const passwordValue = passwordInput.value;
+              const parent = this.parentElement;
+              let helpText = parent.querySelector(".help-text");
+
+              if (!helpText) {
+                helpText = document.createElement("div");
+                helpText.className = "help-text";
+                parent.appendChild(helpText);
+              }
+
+              if (value.length === 0) {
+                helpText.textContent = "";
+                this.style.borderColor = "#e5e7eb";
+              } else if (value !== passwordValue) {
+                helpText.textContent = "Passwords do not match";
+                helpText.style.color = "#dc2626";
+                this.style.borderColor = "#dc2626";
+              } else {
+                helpText.textContent = "✓ Passwords match";
+                helpText.style.color = "#16a34a";
+                this.style.borderColor = "#16a34a";
+              }
+            });
+
+            // Form submission validation
+            document.querySelector("form").addEventListener("submit", function (e) {
+              const password = passwordInput.value;
+              const confirmPassword = confirmPasswordInput.value;
+
+              if (password !== confirmPassword) {
+                e.preventDefault();
+                alert("Passwords do not match!");
+                return false;
+              }
+            });
+          </script>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,17 @@
+# Binaries
+sroreg
+*.exe
+
+# GoReleaser
+dist/
+
+# Go
+*.log
+*.out
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
