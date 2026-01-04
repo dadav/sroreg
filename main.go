@@ -18,9 +18,9 @@ import (
 	"sync"
 	"time"
 
-	_ "github.com/microsoft/go-mssqldb"
 	"github.com/google/uuid"
 	"github.com/gorilla/sessions"
+	_ "github.com/microsoft/go-mssqldb"
 )
 
 type Config struct {
@@ -55,14 +55,16 @@ type ResetTokenData struct {
 	ExpiresAt time.Time
 }
 
-var db *sql.DB
-var tmpl *template.Template
-var sessionStore *sessions.CookieStore
-var activeSessions = make(map[string]SessionData)
-var sessionMutex sync.RWMutex
-var resetTokens = make(map[string]ResetTokenData)
-var tokenMutex sync.RWMutex
-var config Config
+var (
+	db             *sql.DB
+	tmpl           *template.Template
+	sessionStore   *sessions.CookieStore
+	activeSessions = make(map[string]SessionData)
+	sessionMutex   sync.RWMutex
+	resetTokens    = make(map[string]ResetTokenData)
+	tokenMutex     sync.RWMutex
+	config         Config
+)
 
 func main() {
 	var err error
@@ -850,10 +852,22 @@ If you did not request this password reset, please ignore this email.
 Best regards,
 Silkroad Online Team`, resetLink)
 
-	message := fmt.Sprintf("Subject: %s\r\n\r\n%s", subject, body)
-
 	auth := smtp.PlainAuth("", config.SMTPUser, config.SMTPPassword, config.SMTPHost)
+
 	addr := fmt.Sprintf("%s:%d", config.SMTPHost, config.SMTPPort)
+
+	message := fmt.Sprintf(
+		"From: %s\r\n"+
+			"To: %s\r\n"+
+			"Subject: %s\r\n"+
+			"MIME-Version: 1.0\r\n"+
+			"Content-Type: text/plain; charset=\"UTF-8\"\r\n"+
+			"\r\n%s",
+		config.SMTPFrom,
+		email,
+		subject,
+		body,
+	)
 
 	return smtp.SendMail(addr, auth, config.SMTPFrom, []string{email}, []byte(message))
 }
