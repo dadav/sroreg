@@ -1,0 +1,46 @@
+# Caddy reverse proxy configuration for Silkroad Online Registration
+# https://caddyserver.com/docs/
+
+# Replace with your actual domain
+register.silkroad-example.com {
+    # Automatic HTTPS with Let's Encrypt
+    # Caddy will automatically obtain and renew certificates
+
+    # Reverse proxy to the Go application
+    reverse_proxy localhost:8080
+
+    # Optional: Add security headers
+    header {
+        # Enable HSTS
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+        # Prevent clickjacking
+        X-Frame-Options "SAMEORIGIN"
+
+        # Enable XSS protection
+        X-Content-Type-Options "nosniff"
+        X-XSS-Protection "1; mode=block"
+
+        # CSP (adjust as needed)
+        Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline'"
+    }
+
+    # Optional: Enable access logging
+    log {
+        output file /var/log/caddy/sroreg-access.log
+        format json
+    }
+
+    # Optional: Custom error pages
+    handle_errors {
+        respond "{http.error.status_code} {http.error.status_text}"
+    }
+}
+
+# For development/testing with localhost
+localhost:443 {
+    reverse_proxy localhost:8080
+
+    # Use self-signed certificate for local development
+    tls internal
+}

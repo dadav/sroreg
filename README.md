@@ -15,6 +15,14 @@ A beautiful split-screen registration website for Silkroad Online built with Go.
   - Parameterized queries (@p1, @p2, @p3)
   - Input sanitization and validation
   - No direct string concatenation in queries
+- **TLS/HTTPS Support:**
+  - Optional TLS encryption for secure connections
+  - Self-signed certificate generation for development
+  - Production-ready with proper CA certificates
+- **Flexible Configuration:**
+  - Environment variables
+  - Command-line flags
+  - Configurable database connection and server port
 - Duplicate username checking
 - MD5 password hashing
 - Automatic security level assignment (sec_primary and sec_content set to 3)
@@ -58,6 +66,102 @@ All settings can be overridden using command-line flags:
          --db-password YourPassword \
          --db-database SRO_VT_ACCOUNT \
          --port 8080
+```
+
+### TLS/HTTPS Support
+
+The application supports TLS/HTTPS for secure connections:
+
+**Environment Variables:**
+```bash
+TLS_ENABLED=true
+TLS_CERT=./certs/server.crt
+TLS_KEY=./certs/server.key
+```
+
+**Command-Line Flags:**
+```bash
+./sroreg --tls --tls-cert ./certs/server.crt --tls-key ./certs/server.key
+```
+
+**Generate Self-Signed Certificate (for development):**
+```bash
+./generate-cert.sh
+```
+
+This creates `certs/server.crt` and `certs/server.key` for testing purposes.
+
+**⚠️ Important:** Self-signed certificates are for development only. In production, use certificates from a trusted Certificate Authority (CA) like Let's Encrypt.
+
+**Running with TLS:**
+```bash
+# Using environment variables
+TLS_ENABLED=true TLS_CERT=./certs/server.crt TLS_KEY=./certs/server.key DB_PASSWORD=YourPassword go run main.go
+
+# Using flags
+go run main.go --tls --tls-cert ./certs/server.crt --tls-key ./certs/server.key --db-password YourPassword
+```
+
+The server will be accessible at `https://localhost:8080` (or your configured port).
+
+### Reverse Proxy Support
+
+For production deployments, it's recommended to use a reverse proxy like Caddy or Nginx in front of the application. This provides:
+- Automatic HTTPS with Let's Encrypt
+- Load balancing
+- Security headers
+- Access logging
+
+**Using Caddy (Recommended):**
+
+1. Copy the example Caddyfile:
+   ```bash
+   cp Caddyfile.example Caddyfile
+   ```
+
+2. Edit the Caddyfile and replace `register.silkroad-example.com` with your domain
+
+3. Run the Go application on HTTP (Caddy will handle TLS):
+   ```bash
+   DB_PASSWORD=YourPassword ./sroreg --port 8080
+   ```
+
+4. Start Caddy:
+   ```bash
+   caddy run
+   ```
+
+Caddy will automatically:
+- Obtain TLS certificates from Let's Encrypt
+- Handle HTTPS connections
+- Forward requests to your Go application
+- Renew certificates before expiration
+
+**Using Nginx:**
+
+Example Nginx configuration:
+```nginx
+server {
+    listen 80;
+    server_name register.silkroad-example.com;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name register.silkroad-example.com;
+
+    ssl_certificate /path/to/fullchain.pem;
+    ssl_certificate_key /path/to/privkey.pem;
+
+    location / {
+        proxy_pass http://localhost:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
 ```
 
 ### Configuration Priority

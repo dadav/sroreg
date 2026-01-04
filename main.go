@@ -24,6 +24,9 @@ type Config struct {
 	DBPassword string
 	DBDatabase string
 	ServerPort string
+	TLSEnabled bool
+	TLSCert    string
+	TLSKey     string
 }
 
 var db *sql.DB
@@ -39,6 +42,9 @@ func main() {
 	dbPassword := flag.String("db-password", "", "Database password")
 	dbDatabase := flag.String("db-database", "", "Database name")
 	serverPort := flag.String("port", "", "HTTP server port")
+	tlsEnabled := flag.Bool("tls", false, "Enable TLS/HTTPS")
+	tlsCert := flag.String("tls-cert", "", "Path to TLS certificate file")
+	tlsKey := flag.String("tls-key", "", "Path to TLS private key file")
 	flag.Parse()
 
 	// Load configuration from environment variables with defaults
@@ -49,6 +55,9 @@ func main() {
 		DBPassword: getEnvOrDefault("DB_PASSWORD", ""),
 		DBDatabase: getEnvOrDefault("DB_DATABASE", "SRO_VT_ACCOUNT"),
 		ServerPort: getEnvOrDefault("SERVER_PORT", "8080"),
+		TLSEnabled: getEnvAsBoolOrDefault("TLS_ENABLED", false),
+		TLSCert:    getEnvOrDefault("TLS_CERT", ""),
+		TLSKey:     getEnvOrDefault("TLS_KEY", ""),
 	}
 
 	// Override with command-line flags if provided
@@ -69,6 +78,15 @@ func main() {
 	}
 	if *serverPort != "" {
 		config.ServerPort = *serverPort
+	}
+	if *tlsEnabled {
+		config.TLSEnabled = *tlsEnabled
+	}
+	if *tlsCert != "" {
+		config.TLSCert = *tlsCert
+	}
+	if *tlsKey != "" {
+		config.TLSKey = *tlsKey
 	}
 
 	// Check if password is set
@@ -100,8 +118,20 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	serverAddr := ":" + config.ServerPort
-	log.Printf("Server starting on http://localhost:%s\n", config.ServerPort)
-	log.Fatal(http.ListenAndServe(serverAddr, nil))
+
+	// Start server with or without TLS
+	if config.TLSEnabled {
+		// Validate TLS configuration
+		if config.TLSCert == "" || config.TLSKey == "" {
+			log.Fatal("TLS enabled but certificate or key path not provided. Use --tls-cert and --tls-key flags or TLS_CERT and TLS_KEY environment variables")
+		}
+
+		log.Printf("Server starting with TLS on https://localhost:%s\n", config.ServerPort)
+		log.Fatal(http.ListenAndServeTLS(serverAddr, config.TLSCert, config.TLSKey, nil))
+	} else {
+		log.Printf("Server starting on http://localhost:%s\n", config.ServerPort)
+		log.Fatal(http.ListenAndServe(serverAddr, nil))
+	}
 }
 
 func getEnvOrDefault(key, defaultValue string) string {
@@ -115,6 +145,15 @@ func getEnvAsIntOrDefault(key string, defaultValue int) int {
 	if value := os.Getenv(key); value != "" {
 		if intVal, err := strconv.Atoi(value); err == nil {
 			return intVal
+		}
+	}
+	return defaultValue
+}
+
+func getEnvAsBoolOrDefault(key string, defaultValue bool) bool {
+	if value := os.Getenv(key); value != "" {
+		if boolVal, err := strconv.ParseBool(value); err == nil {
+			return boolVal
 		}
 	}
 	return defaultValue
