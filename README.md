@@ -179,6 +179,32 @@ Configuration is loaded in the following order (later overrides earlier):
 
 ## Running the Application
 
+### Windows Quick Start (One-Click)
+
+For Windows users, you can use the provided startup scripts:
+
+**Option 1: Batch File (start.bat)** - Recommended for simplicity
+1. Double-click `start.bat`
+2. Enter your database password when prompted
+3. Press Enter to start the server
+
+**Option 2: PowerShell (start.ps1)** - Recommended for security (masked password input)
+1. Right-click `start.ps1` and select "Run with PowerShell"
+2. Enter your database password when prompted (input will be hidden)
+3. Press Enter to start the server
+
+Both scripts will:
+- Prompt for the database password securely (no hardcoded passwords)
+- Use the compiled `sroreg.exe` binary if available
+- Fall back to `go run main.go` if no binary is found
+- Keep the window open so you can see the server logs
+
+**Note:** Before first use:
+- Build the binary: `go build -o sroreg.exe main.go`
+- Or ensure Go is installed to use `go run main.go`
+
+**Security:** The PowerShell script masks password input for better security, while the batch file shows the password as you type.
+
 ### Using Environment Variables
 
 1. Copy the example environment file:

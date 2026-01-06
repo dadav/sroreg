@@ -10,6 +10,16 @@ This is a Silkroad Online registration website built with Go. It's a single-bina
 
 ### Running the Application
 
+**Windows Quick Start:**
+```cmd
+REM Option 1: Double-click start.bat and enter password when prompted
+start.bat
+
+REM Option 2: Use PowerShell script (masks password input)
+start.ps1
+```
+
+**Linux/macOS:**
 ```bash
 # Quick start with minimal config (requires DB_PASSWORD)
 DB_PASSWORD=YourPassword go run main.go
