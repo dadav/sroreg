@@ -12,7 +12,7 @@ services:
       BASE_URL: ${BASE_URL:-https://${DOMAIN}}
 
   caddy:
-    image: caddy:2-alpine
+    image: caddy:2-alpine@sha256:de23def33b17fb5d1290b0f6c2add1d70780e52341896c00a4c8a2a2fe9d355e
     container_name: sroreg-caddy
     restart: unless-stopped
     ports:
