@@ -14,7 +14,7 @@ COPY main.go ./
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags="-w -s" -o sroreg main.go
 
 # Final stage
-FROM alpine:latest
+FROM alpine:latest@sha256:294b683cb724975bec92580e1e685676bd4b50bda910ddb8c51d4cabeaec77e6
 
 # Install ca-certificates for HTTPS/TLS
 RUN apk --no-cache add ca-certificates tzdata
