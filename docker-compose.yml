@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   sroreg:
-    image: ghcr.io/dadav/sroreg:latest
+    image: ghcr.io/dadav/sroreg:latest@sha256:9bdff82098bc7658b18a6a7a2e44ccf331ad81d13b79d80f2c863a18acf17953
     # Uncomment to build locally instead of pulling from ghcr.io
     # build:
     #   context: .
